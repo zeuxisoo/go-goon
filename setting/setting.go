@@ -18,6 +18,7 @@ type SettingValues struct {
         Host        string
         Port        int
         User        string
+        Password    string
         PrivateKey  string
     }
 }
@@ -43,5 +44,6 @@ func (s *Setting) Load(configFile string) {
     s.Values.Server.Host       = serverSection.Key("HOST").MustString("")
     s.Values.Server.Port       = serverSection.Key("PORT").MustInt(22)
     s.Values.Server.User       = serverSection.Key("USER").MustString("")
+    s.Values.Server.Password   = serverSection.Key("PASSWORD").MustString("")
     s.Values.Server.PrivateKey = serverSection.Key("PRIVATE_KEY").MustString("")
 }

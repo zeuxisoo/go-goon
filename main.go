@@ -33,10 +33,16 @@ func main() {
     log.Info(magenta("host       : ", setting.Values.Server.Host))
     log.Info(magenta("port       : ", setting.Values.Server.Port))
     log.Info(magenta("user       : ", setting.Values.Server.User))
+    log.Info(magenta("password   : ", setting.Values.Server.Password))
     log.Info(magenta("private key: ", setting.Values.Server.PrivateKey))
 
-    // Create ssh authenticator
-    authenticator := new(authenticator.KeyFile)
+    // Create ssh authenticator for key file
+    // authenticator := new(authenticator.KeyFile)
+    // authenticator.SetLogger(log)
+    // authenticator.SetSettingValues(setting.Values)
+
+    // Create ssh authenticator for password
+    authenticator := new(authenticator.Password)
     authenticator.SetLogger(log)
     authenticator.SetSettingValues(setting.Values)
 
@@ -45,6 +51,7 @@ func main() {
         Host      : setting.Values.Server.Host,
         Port      : setting.Values.Server.Port,
         User      : setting.Values.Server.User,
+        Password  : setting.Values.Server.Password,
         PrivateKey: setting.Values.Server.PrivateKey,
     })
     sshAgent.SetLogger(log)

@@ -2,3 +2,6 @@ package: github.com/zeuxisoo/goon
 import:
 - package: github.com/Sirupsen/logrus
 - package: gopkg.in/ini.v1
+- package: golang.org/x/crypto
+  subpackages:
+  - ssh

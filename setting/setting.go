@@ -17,6 +17,7 @@ type SettingValues struct {
     Server struct {
         Host        string
         Port        int
+        User        string
         PrivateKey  string
     }
 }
@@ -39,7 +40,8 @@ func (s *Setting) Load(configFile string) {
     //
     serverSection := config.Section("server")
 
-    s.Values.Server.Host       = serverSection.Key("HOST").MustString("127.0.0.1")
+    s.Values.Server.Host       = serverSection.Key("HOST").MustString("")
     s.Values.Server.Port       = serverSection.Key("PORT").MustInt(22)
+    s.Values.Server.User       = serverSection.Key("USER").MustString("")
     s.Values.Server.PrivateKey = serverSection.Key("PRIVATE_KEY").MustString("")
 }

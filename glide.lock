@@ -1,8 +1,15 @@
-hash: cdfd75fbabd027a967d50e191e541e88620fd0c1956714486120c7e0cadfc6b8
-updated: 2016-06-29T11:42:24.461654876+08:00
+hash: 1c97319c5150f689e4d7c63a4b0226c47fe5debcbacaa8de1d0f1b95d4ecdbe0
+updated: 2016-06-29T13:23:13.437837679+08:00
 imports:
 - name: github.com/Sirupsen/logrus
   version: f3cfb454f4c209e6668c95216c4744b8fddb2356
+- name: golang.org/x/crypto
+  version: 811831de4c4dd03a0b8737233af3b36852386373
+  subpackages:
+  - ssh
+  - curve25519
+  - ed25519
+  - ed25519/internal/edwards25519
 - name: golang.org/x/sys
   version: 62bee037599929a6e9146f29d10dd5208c43507d
   subpackages:

@@ -1,7 +1,7 @@
 package contract
 
 import (
-    "github.com/zeuxisoo/goon/setting"
+    "github.com/zeuxisoo/go-goon/setting"
 
     "github.com/Sirupsen/logrus"
     "golang.org/x/crypto/ssh"

@@ -1,4 +1,4 @@
-package: github.com/zeuxisoo/goon
+package: github.com/zeuxisoo/go-goon
 import:
 - package: github.com/Sirupsen/logrus
 - package: gopkg.in/ini.v1

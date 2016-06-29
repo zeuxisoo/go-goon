@@ -8,10 +8,10 @@ import (
     "github.com/Sirupsen/logrus"
     "github.com/fatih/color"
 
-    "github.com/zeuxisoo/goon/setting"
-    "github.com/zeuxisoo/goon/ssh"
-    "github.com/zeuxisoo/goon/ssh/authenticator"
-    "github.com/zeuxisoo/goon/ssh/contract"
+    "github.com/zeuxisoo/go-goon/setting"
+    "github.com/zeuxisoo/go-goon/ssh"
+    "github.com/zeuxisoo/go-goon/ssh/authenticator"
+    "github.com/zeuxisoo/go-goon/ssh/contract"
 )
 
 var (
@@ -23,8 +23,8 @@ var (
 func usage() {
     const usage = `Goon: a simple ssh execute commands tools
 Usage:
-    goon [-a] [-c CONFIG_FILE] [-r COMMAND]
-    goon -h | --help
+    go-goon [-a] [-c CONFIG_FILE] [-r COMMAND]
+    go-goon -h | --help
 Options:
     -a,             Authorization method
     -c,             Configure file path

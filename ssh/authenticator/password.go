@@ -4,7 +4,7 @@ import (
     "time"
     "strconv"
 
-    "github.com/zeuxisoo/goon/setting"
+    "github.com/zeuxisoo/go-goon/setting"
 
     "github.com/Sirupsen/logrus"
     "golang.org/x/crypto/ssh"

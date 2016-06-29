@@ -1,7 +1,7 @@
 package ssh
 
 import (
-    "github.com/zeuxisoo/goon/ssh/contract"
+    "github.com/zeuxisoo/go-goon/ssh/contract"
 
     "github.com/Sirupsen/logrus"
     "golang.org/x/crypto/ssh"

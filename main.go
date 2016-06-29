@@ -1,13 +1,12 @@
 package main
 
 import (
-    "fmt"
-
     "github.com/Sirupsen/logrus"
     "github.com/fatih/color"
 
     "github.com/zeuxisoo/goon/setting"
     "github.com/zeuxisoo/goon/ssh"
+    "github.com/zeuxisoo/goon/ssh/authenticator"
 )
 
 var (
@@ -36,20 +35,25 @@ func main() {
     log.Info(magenta("user       : ", setting.Values.Server.User))
     log.Info(magenta("private key: ", setting.Values.Server.PrivateKey))
 
-    // Init ssh client
-    ssh := ssh.NewSsh(ssh.Config{
+    // Create ssh authenticator
+    authenticator := new(authenticator.KeyFile)
+    authenticator.SetLogger(log)
+    authenticator.SetSettingValues(setting.Values)
+
+    // Create ssh agent
+    sshAgent := ssh.NewSsh(ssh.Config{
         Host      : setting.Values.Server.Host,
         Port      : setting.Values.Server.Port,
         User      : setting.Values.Server.User,
         PrivateKey: setting.Values.Server.PrivateKey,
     })
-    ssh.SetLogger(log)
+    sshAgent.SetLogger(log)
+    sshAgent.SetAuthenticator(authenticator)
 
-    // Run command in ssh client
-    result := ssh.RunCommand("ping -c 4 -t 15 hk.yahoo.com")
+    // Run command using ssh agent
+    result := sshAgent.RunCommand("ping -c 4 -t 15 hk.yahoo.com")
 
     // Display result
     log.Info(yellow("Result"))
-
-    fmt.Println("\n" + result)
+    color.White("\n%s", result)
 }

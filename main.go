@@ -1,18 +1,40 @@
 package main
 
 import (
+    "fmt"
+    "flag"
+    "os"
+
     "github.com/Sirupsen/logrus"
     "github.com/fatih/color"
 
     "github.com/zeuxisoo/goon/setting"
     "github.com/zeuxisoo/goon/ssh"
     "github.com/zeuxisoo/goon/ssh/authenticator"
+    "github.com/zeuxisoo/goon/ssh/contract"
 )
 
 var (
-    log        = logrus.New()
-    configFile = "conf/app.ini"
+    version = "0.1.0"
+
+    log     = logrus.New()
 )
+
+func usage() {
+    const usage = `Goon: a simple ssh execute commands tools
+Usage:
+    goon [-a] [-c CONFIG_FILE] [-r COMMAND]
+    goon -h | --help
+Options:
+    -a,             Authorization method
+    -c,             Configure file path
+    -r,             Command for execute
+    -h, --help      Output help information
+`
+
+    fmt.Printf(usage)
+    os.Exit(0)
+}
 
 func init() {
     log.Formatter = new(logrus.TextFormatter)
@@ -20,47 +42,78 @@ func init() {
 }
 
 func main() {
-    cyan    := color.New(color.FgCyan).SprintFunc()
-    magenta := color.New(color.FgMagenta).SprintFunc()
-    yellow  := color.New(color.FgYellow).SprintFunc()
+    var authMethod, configFile, command string
+    var help bool
 
-    log.Info(cyan("Goon"))
+    argument := NewArgument()
 
-    // Load setting
-    setting := setting.NewSetting(log)
-    setting.Load(configFile)
+    flag.StringVar(&authMethod, "a",    "",    "Authorization method")
+    flag.StringVar(&configFile, "c",    "",    "Configure file path")
+    flag.StringVar(&command,    "r",    "",    "Command for execute")
+    flag.BoolVar(&help,         "h",    false, "Show help message")
+    flag.BoolVar(&help,         "help", false, "Show help message")
 
-    log.Info(magenta("host       : ", setting.Values.Server.Host))
-    log.Info(magenta("port       : ", setting.Values.Server.Port))
-    log.Info(magenta("user       : ", setting.Values.Server.User))
-    log.Info(magenta("password   : ", setting.Values.Server.Password))
-    log.Info(magenta("private key: ", setting.Values.Server.PrivateKey))
+    flag.Usage = usage
 
-    // Create ssh authenticator for key file
-    // authenticator := new(authenticator.KeyFile)
-    // authenticator.SetLogger(log)
-    // authenticator.SetSettingValues(setting.Values)
+    flag.Parse()
 
-    // Create ssh authenticator for password
-    authenticator := new(authenticator.Password)
-    authenticator.SetLogger(log)
-    authenticator.SetSettingValues(setting.Values)
+    if help {
+        usage()
+    }
 
-    // Create ssh agent
-    sshAgent := ssh.NewSsh(ssh.Config{
-        Host      : setting.Values.Server.Host,
-        Port      : setting.Values.Server.Port,
-        User      : setting.Values.Server.User,
-        Password  : setting.Values.Server.Password,
-        PrivateKey: setting.Values.Server.PrivateKey,
-    })
-    sshAgent.SetLogger(log)
-    sshAgent.SetAuthenticator(authenticator)
+    argument.AuthMethod = authMethod
+    argument.ConfigFile = configFile
+    argument.Command    = command
 
-    // Run command using ssh agent
-    result := sshAgent.RunCommand("ping -c 4 -t 15 hk.yahoo.com")
+    if _, err := argument.Check(); err != nil {
+        color.Red("Argument error: %s", err)
+    }else{
+        cyan    := color.New(color.FgCyan).SprintFunc()
+        magenta := color.New(color.FgMagenta).SprintFunc()
+        yellow  := color.New(color.FgYellow).SprintFunc()
 
-    // Display result
-    log.Info(yellow("Result"))
-    color.White("\n%s", result)
+        log.Info(cyan("Goon"))
+
+        // Load setting
+        setting := setting.NewSetting(log)
+        setting.Load(configFile)
+
+        log.Info(magenta("host       : ", setting.Values.Server.Host))
+        log.Info(magenta("port       : ", setting.Values.Server.Port))
+        log.Info(magenta("user       : ", setting.Values.Server.User))
+        log.Info(magenta("password   : ", setting.Values.Server.Password))
+        log.Info(magenta("private key: ", setting.Values.Server.PrivateKey))
+
+        var auth contract.Authenticator
+
+        if authMethod == "keyfile" {
+            // Create ssh authenticator for key file
+            auth = new(authenticator.KeyFile)
+            auth.SetLogger(log)
+            auth.SetSettingValues(setting.Values)
+        }else{
+            // Create ssh authenticator for password
+            auth = new(authenticator.Password)
+            auth.SetLogger(log)
+            auth.SetSettingValues(setting.Values)
+        }
+
+        // Create ssh agent
+        sshAgent := ssh.NewSsh(ssh.Config{
+            Host      : setting.Values.Server.Host,
+            Port      : setting.Values.Server.Port,
+            User      : setting.Values.Server.User,
+            Password  : setting.Values.Server.Password,
+            PrivateKey: setting.Values.Server.PrivateKey,
+        })
+        sshAgent.SetLogger(log)
+        sshAgent.SetAuthenticator(auth)
+
+        // Run command using ssh agent
+        result := sshAgent.RunCommand(command)
+
+        // Display result
+        log.Info(yellow("Result"))
+        color.White("\n%s", result)
+    }
 }
